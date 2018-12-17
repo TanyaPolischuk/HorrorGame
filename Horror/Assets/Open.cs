@@ -1,0 +1,69 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Open : MonoBehaviour {
+    public Transform player;
+    Transform door;
+    int playerPos;
+    bool isOpen;
+	// Use this for initialization
+	void Start () {
+       // door = GetComponentInChildren<Transform>();
+        isOpen = false;
+	}
+	
+	// Update is called once per frame
+	void Update () {
+      /*  if (Input.GetKeyDown(KeyCode.E))
+        {
+          
+            Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width/2f,Screen.height/2f));
+            Debug.DrawRay(ray.origin, ray.direction * 10, Color.yellow);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, 50))
+            {
+                Transform obj = hit.transform;
+                if (obj.gameObject.tag == "door")
+                {
+                    // print("playerPos " + playerPos);
+                    if (!isOpen)
+                    {
+                        // print("open the door");
+                        playerPos = transform.position.x - player.position.x > 0 ? 1 : -1;
+                      iTween.RotateTo(door.gameObject, iTween.Hash("rotation", new Vector3(0, playerPos * 90, 0), "time", 5, "isLocal", true));
+
+                    }
+                    if (isOpen)
+                    {
+                       // print("close the door");
+                        iTween.RotateTo(door.gameObject, iTween.Hash("rotation", new Vector3(0, 0, 0), "time", 5, "isLocal", true));
+                    }
+                    isOpen = !isOpen;
+                    print("door is open " + isOpen);
+                }
+            }
+
+        }
+       */
+    }
+    public void OpenTheDoor()
+    {
+        door = transform.parent;
+        print(gameObject.name);
+        if (!isOpen)
+        {
+            // print("open the door");
+            playerPos = transform.position.x - player.position.x > 0 ? 1 : -1;
+            iTween.RotateTo(door.gameObject, iTween.Hash("rotation", new Vector3(0, playerPos * 90, 0), "time", 5, "isLocal", true));
+        }
+        if (isOpen)
+        {
+            // print("close the door");
+            iTween.RotateTo(door.gameObject, iTween.Hash("rotation", new Vector3(0, 0, 0), "time", 5, "isLocal", true));
+        }
+        isOpen = !isOpen;
+        print("door is open " + isOpen);
+    }
+}
+
