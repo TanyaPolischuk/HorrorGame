@@ -6,6 +6,8 @@ public class PlayerControler : MonoBehaviour
 {
 
     public float speed = 5;
+    public Transform Chest;
+    bool isHide;
     // public Rigidbody bullet;
     //public Transform gun;
     Rigidbody rb;
@@ -16,6 +18,7 @@ public class PlayerControler : MonoBehaviour
     bool isOpen;
     void Start()
     {
+       isHide= Chest.GetComponent<HideAndSeek>().isHide;
         isLight = false;
         isOpen = false;
         rb = GetComponent<Rigidbody>();
@@ -24,12 +27,14 @@ public class PlayerControler : MonoBehaviour
 
     private void FixedUpdate()
     {
-
+         isHide= Chest.GetComponent<HideAndSeek>().isHide;
+          if (isHide==false)
+         {
         rb.velocity = transform.TransformDirection(Input.GetAxis("Horizontal") * speed, rb.velocity.y, Input.GetAxis("Vertical") * speed);
         transform.Rotate(0, Input.GetAxis("Mouse X") * 2f, 0, Space.World);
         rotCam = cam.localEulerAngles;
         cam.Rotate(-Input.GetAxis("Mouse Y") * 2f, 0, 0, Space.Self);
-
+          
         //spotLight.transform.Rotate(0, Input.GetAxis("Mouse X"), 0, Space.World);
 
         //spotLight.transform.TransformDirection(Input.GetAxis("Horizontal") * speed, rb.velocity.y, Input.GetAxis("Vertical") * speed);
@@ -40,6 +45,9 @@ public class PlayerControler : MonoBehaviour
         {
             cam.localEulerAngles = rotCam;
         }
+         
+         }
+         
     }
 
 
@@ -86,6 +94,7 @@ public class PlayerControler : MonoBehaviour
                
             }
         }
+
     }
 
 }
