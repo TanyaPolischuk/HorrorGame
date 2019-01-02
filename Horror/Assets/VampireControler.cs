@@ -1,18 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.AI;
 public class VampireControler : MonoBehaviour
 {
     public Transform player;
     public Transform eyes;
     public Transform bat;
+    NavMeshAgent agent;
     bool isBat;
     float timer;
     // public Camera cam;
     // Use this for initialization
     void Start()
     {
+        agent = GetComponent<NavMeshAgent>();
         timer = 0;
     }
 
@@ -41,13 +43,14 @@ public class VampireControler : MonoBehaviour
         {
             transform.LookAt(player);
         }
-        /* if (isBat)
+         if (isBat)
          {
              print("I hear you");
-             iTween.MoveTo(gameObject, iTween.Hash("position", new Vector3(bat.transform.position.x,transform.position.y,bat.transform.position.z), "looktarget", player.position, "time", 10));
+            agent.SetDestination(bat.transform.position);
+           //  iTween.MoveTo(gameObject, iTween.Hash("position", new Vector3(bat.transform.position.x,transform.position.y,bat.transform.position.z), "looktarget", player.position, "time", 10));
              // iTween.MoveTo(gameObject, iTween.Hash("position", bat.transform, "looktarget", bat.transform, "time", 10));
          }
-     }*/
+     }
         /* private void OnBecameVisible()
          {
              iTween.MoveTo(gameObject, iTween.Hash("position", player.transform, "looktarget", player.transform, "time", 1));
@@ -62,4 +65,4 @@ public class VampireControler : MonoBehaviour
           }*/
 
     }
-}
+//}
