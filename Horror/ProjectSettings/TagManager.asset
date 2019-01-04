@@ -5,8 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - door
-  - door2
   - player
+  - scroll
   layers:
   - Default
   - TransparentFX
