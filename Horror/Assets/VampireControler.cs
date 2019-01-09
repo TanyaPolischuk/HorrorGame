@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 public class VampireControler : MonoBehaviour
 {
+    AudioSource source;
     public Transform player;
     public Transform eyes;
     public Transform bat;
@@ -17,6 +18,7 @@ public class VampireControler : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        source = GetComponent<AudioSource>();
         patrul = true;
         agent = GetComponent<NavMeshAgent>();
         timer = 0;
@@ -26,7 +28,7 @@ public class VampireControler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (patrul && !isBat)
+       /* if (patrul && !isBat)
         {
             if (Vector3.Distance(gameObject.transform.position, nextPoint) > 1)
             {
@@ -37,7 +39,7 @@ public class VampireControler : MonoBehaviour
                 nextPoint = markers[Random.Range(0, markers.Length)].position;
               //  print(nextPoint);
             }
-        }
+        }*/
         isBat = bat.GetComponent<BatControler>().isBat;
         timer += Time.deltaTime;
         if (timer >= 1)
@@ -52,6 +54,7 @@ public class VampireControler : MonoBehaviour
                 if (hit.transform.tag == "player")
                 {
                     iTween.MoveTo(gameObject, iTween.Hash("position", player.transform, "looktarget", player.transform, "time", 1));
+                    source.Play();
                 }
             }
 

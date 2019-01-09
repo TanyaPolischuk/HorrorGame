@@ -19,8 +19,15 @@ public class PlayerControler : MonoBehaviour
     public bool isLight;
     Vector3 rotCam;
     bool isOpen;
+    public AudioClip[] clip;
+    //public AudioClip clip;
+    AudioSource source;
+    public AudioSource sourceFon, door;
+    float move;
+
     void Start()
     {
+        source = GetComponent<AudioSource>();
         text.text = "";
         List<int> list = new List<int>() { 1, 2, 3, 4, 5, 6, 7 };
         int rand;
@@ -40,11 +47,23 @@ public class PlayerControler : MonoBehaviour
 
     private void FixedUpdate()
     {
-         isHide= Chest.GetComponent<HideAndSeek>().isHide;
+       
+
+        isHide = Chest.GetComponent<HideAndSeek>().isHide;
           if (isHide==false)
          {
         rb.velocity = transform.TransformDirection(Input.GetAxis("Horizontal") * speed, rb.velocity.y, Input.GetAxis("Vertical") * speed);
-        transform.Rotate(0, Input.GetAxis("Mouse X") * 2f, 0, Space.World);
+            if (rb.velocity.x != 0 && !source.isPlaying)
+            {
+                if (Physics.Raycast(transform.position - new Vector3(0, 1.65f, 0), Vector3.down, 0.2f))
+                {
+
+                    source.clip = clip[1];
+
+                    source.Play();
+                }
+            }
+            transform.Rotate(0, Input.GetAxis("Mouse X") * 2f, 0, Space.World);
         rotCam = cam.localEulerAngles;
         cam.Rotate(-Input.GetAxis("Mouse Y") * 2f, 0, 0, Space.Self);
           
@@ -73,6 +92,7 @@ public class PlayerControler : MonoBehaviour
         {
             // print("add");
             rb.AddForce(0, 300, 0);
+            source.PlayOneShot(clip[0]);
         }
 
         /* if (Input.GetMouseButtonDown(0))

@@ -7,9 +7,13 @@ public class BatControler : MonoBehaviour
     public Transform player, marker1, marker2;
     public bool isBat;
     public Vector3 nextPoint;
+    public AudioSource source;
+    public AudioClip clip;
+    float timer;
     // Start is called before the first frame update
     void Start()
     {
+        timer = 0;
         nextPoint = new Vector3(Random.Range(marker1.transform.position.x, marker2.transform.position.x),
                                         0, Random.Range(marker1.transform.position.z, marker2.transform.position.z));
         iTween.MoveTo(gameObject, iTween.Hash("position", nextPoint, "speed", 100*Time.deltaTime, "orienttopath",true));
@@ -18,6 +22,13 @@ public class BatControler : MonoBehaviour
     }
     private void Update()
     {
+        /*timer += Time.deltaTime;
+        if (timer>=1)
+        {
+            timer = 0;
+            source.PlayOneShot(clip);
+        }*/
+        source.Play();
         // gameObject.transform.eulerAngles = new Vector3(-90, 0, 0);
         if (!isBat)
         {

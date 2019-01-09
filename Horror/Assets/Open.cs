@@ -7,10 +7,13 @@ public class Open : MonoBehaviour {
     Transform door;
     int playerPos;
     bool isOpen;
+    public AudioClip[] clip;
+    public AudioSource source;
 	// Use this for initialization
 	void Start () {
        // door = GetComponentInChildren<Transform>();
         isOpen = false;
+        //clip = player.GetComponent<AudioClip[]>();
 	}
 	
 	// Update is called once per frame
@@ -59,6 +62,7 @@ public class Open : MonoBehaviour {
            // playerPos =(int) Mathf.Sign(gameObject.transform.position.y);
                 playerPos = transform.position.x - player.position.x > 0 ? 1 : -1;
             iTween.RotateTo(door.gameObject, iTween.Hash("rotation", new Vector3(0, playerPos * 90, 0), "time", 5, "isLocal", true));
+            source.PlayOneShot(clip[0]);
             // iTween.RotateTo(door.gameObject, iTween.Hash("rotation", new Vector3(0, playerPos * 90, 0), "time", 5, "isLocal", true));
         }
        
@@ -66,6 +70,7 @@ public class Open : MonoBehaviour {
             {
                 // print("close the door");
                 iTween.RotateTo(door.gameObject, iTween.Hash("rotation", new Vector3(0, 0, 0), "time", 5, "isLocal", true));
+            source.PlayOneShot(clip[1]);
             }
       
             isOpen = !isOpen;
