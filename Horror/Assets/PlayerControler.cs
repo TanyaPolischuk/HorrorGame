@@ -5,12 +5,13 @@ using UnityEngine.UI;
 
 public class PlayerControler : MonoBehaviour
 {
+    public Transform vampire, GameBox;
     public Image image;
     public Text text;
     public Transform[] sphere;
     public float speed = 5;
     public Transform Chest, scroll;
-    bool isHide;
+    public bool isHide;
     // public Rigidbody bullet;
     //public Transform gun;
     Rigidbody rb;
@@ -18,15 +19,17 @@ public class PlayerControler : MonoBehaviour
     public GameObject spotLight;
     public bool isLight;
     Vector3 rotCam;
-    bool isOpen;
+    bool isOpen, isDead;
     public AudioClip[] clip;
     //public AudioClip clip;
     AudioSource source;
+    public Ray ray;
     public AudioSource sourceFon, door;
     float move;
-
     void Start()
     {
+        isDead = vampire.GetComponent<VampireControler>().isDead;
+        print(isDead);
         source = GetComponent<AudioSource>();
         text.text = "";
         List<int> list = new List<int>() { 1, 2, 3, 4, 5, 6, 7 };
@@ -47,10 +50,10 @@ public class PlayerControler : MonoBehaviour
 
     private void FixedUpdate()
     {
-       
+        isDead = vampire.GetComponent<VampireControler>().isDead;
 
         isHide = Chest.GetComponent<HideAndSeek>().isHide;
-          if (isHide==false)
+        if (isHide==false && !isDead)
          {
         rb.velocity = transform.TransformDirection(Input.GetAxis("Horizontal") * speed, rb.velocity.y, Input.GetAxis("Vertical") * speed);
             if (rb.velocity.x != 0 && !source.isPlaying)
@@ -70,7 +73,7 @@ public class PlayerControler : MonoBehaviour
         //spotLight.transform.Rotate(0, Input.GetAxis("Mouse X"), 0, Space.World);
 
         //spotLight.transform.TransformDirection(Input.GetAxis("Horizontal") * speed, rb.velocity.y, Input.GetAxis("Vertical") * speed);
-        if ((cam.localEulerAngles.x > 310 && cam.localEulerAngles.x < 360) || (cam.localEulerAngles.x > 0 && cam.localEulerAngles.x < 25))
+        if ((cam.localEulerAngles.x > 310 && cam.localEulerAngles.x < 360) || (cam.localEulerAngles.x > 0 && cam.localEulerAngles.x < 50))
         {
         }
         else
@@ -110,7 +113,9 @@ public class PlayerControler : MonoBehaviour
                 for (int i = 0; i <= 6;i++)
             {
                 s += sphere[i].name;
+                print(s);
             }
+            print(text.text);
             if (s==text.text)
             {
                 print("win");
@@ -135,9 +140,11 @@ public class PlayerControler : MonoBehaviour
                 image.gameObject.SetActive(false);
                 text.gameObject.SetActive(false);
             }
-            Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
+            ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
+            // Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
             Debug.DrawRay(ray.origin, ray.direction * 10, Color.yellow);
             RaycastHit hit;
+
             if (Physics.Raycast(ray, out hit, 50))
             {
                 if (hit.transform.tag  == "door")
@@ -145,7 +152,7 @@ public class PlayerControler : MonoBehaviour
                     print("door");
                     hit.transform.GetComponent<Open>().OpenTheDoor();
                 }
-                if (hit.transform.tag == "scroll" && !image.IsActive())
+                else if (hit.transform.tag == "scroll" && !image.IsActive())
                 {
                     image.gameObject.SetActive(true);
                     text.gameObject.SetActive(true);
@@ -159,6 +166,11 @@ public class PlayerControler : MonoBehaviour
                         text.text += rand;
                         list.Remove(rand);
                     }*/
+                }
+                else if (hit.transform.tag=="element")
+                {
+                    GameBox.GetComponent<GameScript>().Game(hit.transform);
+                    //hit.transform.gameObject.GetComponentInChildren<Light>().intensity=1;
                 }
             }
         }

@@ -10,7 +10,8 @@ public class VampireControler : MonoBehaviour
     public Transform bat;
     public Vector3 nextPoint;
     NavMeshAgent agent;
-    bool isBat;
+    bool isBat, isPlayer, isHide;
+    public bool isDead;
     public bool patrul;
     float timer;
     public Transform[] markers;
@@ -18,6 +19,8 @@ public class VampireControler : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        isDead = false;
+        isPlayer = false;
         source = GetComponent<AudioSource>();
         patrul = true;
         agent = GetComponent<NavMeshAgent>();
@@ -28,7 +31,13 @@ public class VampireControler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       /* if (patrul && !isBat)
+        isHide = player.GetComponent<PlayerControler>().isHide;
+        if (Vector3.Distance(gameObject.transform.position,player.transform.position)<5&&!isHide)
+        {
+            isPlayer = true;
+            transform.LookAt(player);
+        }
+        if (patrul && !isBat && !isPlayer)
         {
             if (Vector3.Distance(gameObject.transform.position, nextPoint) > 1)
             {
@@ -39,7 +48,7 @@ public class VampireControler : MonoBehaviour
                 nextPoint = markers[Random.Range(0, markers.Length)].position;
               //  print(nextPoint);
             }
-        }*/
+        }
         isBat = bat.GetComponent<BatControler>().isBat;
         timer += Time.deltaTime;
         if (timer >= 1)
@@ -51,10 +60,11 @@ public class VampireControler : MonoBehaviour
             if (Physics.Raycast(ray, out hit, 500))
             {
                // print(hit.transform.name);
-                if (hit.transform.tag == "player")
+                if (hit.transform.tag == "player" && !isDead)
                 {
                     iTween.MoveTo(gameObject, iTween.Hash("position", player.transform, "looktarget", player.transform, "time", 1));
                     source.Play();
+                    isDead = true;
                 }
             }
 
@@ -67,7 +77,6 @@ public class VampireControler : MonoBehaviour
         }*/
          if (isBat)
          {
-             print("I hear you");
             agent.SetDestination(bat.transform.position);
            //  iTween.MoveTo(gameObject, iTween.Hash("position", new Vector3(bat.transform.position.x,transform.position.y,bat.transform.position.z), "looktarget", player.position, "time", 10));
              // iTween.MoveTo(gameObject, iTween.Hash("position", bat.transform, "looktarget", bat.transform, "time", 10));
