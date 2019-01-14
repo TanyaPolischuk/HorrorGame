@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - door
+  - player
+  - scroll
+  - element
   layers:
   - Default
   - TransparentFX
