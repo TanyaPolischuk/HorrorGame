@@ -5,12 +5,12 @@ using UnityEngine.AI;
 public class VampireControler : MonoBehaviour
 {
     AudioSource source;
-    public Transform player;
+    public Transform player, door, vampPoint;
     public Transform eyes;
     public Transform bat;
     public Vector3 nextPoint;
     NavMeshAgent agent;
-    bool isBat, isPlayer, isHide;
+    bool isBat, isPlayer, isHide, isClose;
     public bool isDead;
     public bool patrul;
     float timer;
@@ -19,18 +19,33 @@ public class VampireControler : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        isClose = false;
         isDead = false;
         isPlayer = false;
         source = GetComponent<AudioSource>();
         patrul = true;
         agent = GetComponent<NavMeshAgent>();
         timer = 0;
-        nextPoint = markers[Random.Range(0, markers.Length)].position;
+        nextPoint = markers[Random.Range(0, markers.Length-1)].position;
     }
 
     // Update is called once per frame
     void Update()
     {
+       if (!patrul&& Vector3.Distance(gameObject.transform.position, markers[markers.Length - 1].position) < 1)
+        {
+            agent.SetDestination(vampPoint.position);
+            print(Vector3.Distance(gameObject.transform.position, vampPoint.position));
+            isClose = true;
+        }
+        if (Vector3.Distance(gameObject.transform.position, vampPoint.position) <= 1&&isClose)
+        {
+            isClose = false;
+            print("vamp close this door");
+            gameObject.transform.LookAt(door);
+            door.GetComponent<Open>().OpenTheDoor();
+            patrul = true;
+        }
         isHide = player.GetComponent<PlayerControler>().isHide;
         if (Vector3.Distance(gameObject.transform.position,player.transform.position)<5&&!isHide)
         {
@@ -45,7 +60,7 @@ public class VampireControler : MonoBehaviour
             }
             else
             {
-                nextPoint = markers[Random.Range(0, markers.Length)].position;
+                nextPoint = markers[Random.Range(0, markers.Length-1)].position;
               //  print(nextPoint);
             }
         }
@@ -65,6 +80,11 @@ public class VampireControler : MonoBehaviour
                     iTween.MoveTo(gameObject, iTween.Hash("position", player.transform, "looktarget", player.transform, "time", 1));
                     source.Play();
                     isDead = true;
+                }
+                else if (hit.transform.tag == "door"&&Vector3.Distance(gameObject.transform.position,door.position)<3&&door.GetComponent<Open>().isOpen==false)
+                {
+                    hit.transform.GetComponent<Open>().isPlayer = false;
+                    hit.transform.GetComponent<Open>().OpenTheDoor();
                 }
             }
 
@@ -99,5 +119,23 @@ public class VampireControler : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+    public void DoorIsOpen()
+    {
+        patrul = false;
+        agent.SetDestination(markers[markers.Length - 1].position);
+        print("tutu");
+        /*if (Vector3.Distance(gameObject.transform.position, markers[markers.Length - 1].position) < 1)
+        {
+            agent.SetDestination(vampPoint.position);
+            print(Vector3.Distance(gameObject.transform.position, vampPoint.position));
+            if (Vector3.Distance(gameObject.transform.position, vampPoint.position) <= 1)
+            {
+                print("vamp close this door");
+                gameObject.transform.LookAt(door);
+                door.GetComponent<Open>().OpenTheDoor();
+                patrul = true;
+            }
+        }*/
     }
-//}
+    }
+

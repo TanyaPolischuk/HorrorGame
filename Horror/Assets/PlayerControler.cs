@@ -153,6 +153,7 @@ public class PlayerControler : MonoBehaviour
                 print(hit.transform.gameObject.tag);
                 if (hit.transform.tag  == "door")
                 {
+                    hit.transform.GetComponent<Open>().isPlayer = true;
                     print("door");
                     hit.transform.GetComponent<Open>().OpenTheDoor();
                 }

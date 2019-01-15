@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HideAndSeek : MonoBehaviour
 {
-    public Transform player, side;
+    public Transform player, side, vampire;
     public bool isHide;
     Collider coll;
     // Start is called before the first frame update

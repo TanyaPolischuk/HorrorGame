@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Open : MonoBehaviour {
-    public Transform player;
+    public Transform player, vampire;
     Transform door;
     int playerPos;
-    public bool isOpen;
+    public bool isOpen, isPlayer;
     public AudioClip[] clip;
     public AudioSource source;
 	// Use this for initialization
 	void Start () {
        // door = GetComponentInChildren<Transform>();
         isOpen = false;
+        isPlayer = true;
         //clip = player.GetComponent<AudioClip[]>();
 	}
 	
@@ -61,9 +62,12 @@ public class Open : MonoBehaviour {
             {
             // print("open the door");
            // playerPos =(int) Mathf.Sign(gameObject.transform.position.y);
+            if (isPlayer)
                 playerPos = transform.position.x - player.position.x > 0 ? 1 : -1;
+            else playerPos = transform.position.x - vampire.position.x > 0 ? 1 : -1;
             iTween.RotateTo(door.gameObject, iTween.Hash("rotation", new Vector3(0, playerPos * 90, 0), "time", 5, "isLocal", true));
             source.PlayOneShot(clip[0]);
+            vampire.GetComponent<VampireControler>().DoorIsOpen();
             // iTween.RotateTo(door.gameObject, iTween.Hash("rotation", new Vector3(0, playerPos * 90, 0), "time", 5, "isLocal", true));
         }
        
