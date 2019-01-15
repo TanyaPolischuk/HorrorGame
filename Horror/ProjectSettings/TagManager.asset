@@ -9,6 +9,7 @@ TagManager:
   - scroll
   - element
   - chest
+  - key
   layers:
   - Default
   - TransparentFX

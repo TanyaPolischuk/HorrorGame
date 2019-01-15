@@ -10,7 +10,7 @@ public class VampireControler : MonoBehaviour
     public Transform bat;
     public Vector3 nextPoint;
     NavMeshAgent agent;
-    bool isBat, isPlayer, isHide, isClose;
+    bool isBat, isPlayer, isHide, isClose, isGo;
     public bool isDead;
     public bool patrul;
     float timer;
@@ -19,6 +19,7 @@ public class VampireControler : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        isGo = false;
         isClose = false;
         isDead = false;
         isPlayer = false;
@@ -32,19 +33,30 @@ public class VampireControler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       if (!patrul&& Vector3.Distance(gameObject.transform.position, markers[markers.Length - 1].position) < 1)
+        if (!patrul&& Vector3.Distance(gameObject.transform.position, markers[markers.Length - 1].position) < 1)
         {
             agent.SetDestination(vampPoint.position);
             print(Vector3.Distance(gameObject.transform.position, vampPoint.position));
             isClose = true;
         }
+
         if (Vector3.Distance(gameObject.transform.position, vampPoint.position) <= 1&&isClose)
         {
-            isClose = false;
-            print("vamp close this door");
-            gameObject.transform.LookAt(door);
-            door.GetComponent<Open>().OpenTheDoor();
-            patrul = true;
+            print("go go go");
+            if (door.GetComponent<Open>().closed)
+            {
+                isGo = true;
+                print("where is MY key");
+            }
+            if (!isGo)
+            {
+                isClose = false;
+                print("vamp close this door");
+                gameObject.transform.LookAt(door);
+                door.GetComponent<Open>().OpenTheDoor();
+
+            }
+                patrul = true;
         }
         isHide = player.GetComponent<PlayerControler>().isHide;
         if (Vector3.Distance(gameObject.transform.position,player.transform.position)<5&&!isHide)
@@ -122,7 +134,13 @@ public class VampireControler : MonoBehaviour
     public void DoorIsOpen()
     {
         patrul = false;
-        agent.SetDestination(markers[markers.Length - 1].position);
+        agent.SetDestination(vampPoint.position);
+        /* if (door.GetComponent<Open>().closed)
+         {
+             agent.SetDestination(vampPoint.position);
+         }
+         else*/
+        // agent.SetDestination(markers[markers.Length - 1].position);
         print("tutu");
         /*if (Vector3.Distance(gameObject.transform.position, markers[markers.Length - 1].position) < 1)
         {

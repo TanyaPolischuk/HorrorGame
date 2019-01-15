@@ -17,7 +17,7 @@ public class PlayerControler : MonoBehaviour
     Rigidbody rb;
     Transform cam;
     public GameObject spotLight;
-    public bool isLight;
+    public bool isLight, key;
     Vector3 rotCam;
     bool isOpen, isDead;
     public AudioClip[] clip;
@@ -28,6 +28,7 @@ public class PlayerControler : MonoBehaviour
     float move;
     void Start()
     {
+        key = false;
         isDead = vampire.GetComponent<VampireControler>().isDead;
         print(isDead);
         source = GetComponent<AudioSource>();
@@ -151,7 +152,7 @@ public class PlayerControler : MonoBehaviour
             if (Physics.Raycast(ray, out hit, 50))
             {
                 print(hit.transform.gameObject.tag);
-                if (hit.transform.tag  == "door")
+                if (hit.transform.tag == "door")
                 {
                     hit.transform.GetComponent<Open>().isPlayer = true;
                     print("door");
@@ -161,35 +162,41 @@ public class PlayerControler : MonoBehaviour
                 {
                     image.gameObject.SetActive(true);
                     text.gameObject.SetActive(true);
-                   /* text.text = "";
-                    List<int> list = new List<int>(){1,2,3,4,5,6,7};
-                    int rand;
-                    for (int i = 1; i <= 7;i++)
-                    {
-                        rand = list[Random.Range(0, list.Count-1)];
-                        print(rand);
-                        text.text += rand;
-                        list.Remove(rand);
-                    }*/
+                    /* text.text = "";
+                     List<int> list = new List<int>(){1,2,3,4,5,6,7};
+                     int rand;
+                     for (int i = 1; i <= 7;i++)
+                     {
+                         rand = list[Random.Range(0, list.Count-1)];
+                         print(rand);
+                         text.text += rand;
+                         list.Remove(rand);
+                     }*/
                 }
                 else if (isHide)
                 {
                     isHide = false;
                 }
-                else if (hit.transform.tag=="chest"&&!isHide)
+                else if (hit.transform.tag == "chest" && !isHide)
                 {
-              
+
                     hit.transform.gameObject.GetComponent<HideAndSeek>().Hide();
                     isHide = true;
-                   // Time.timeScale = 0;
+                    // Time.timeScale = 0;
                 }
-                else if (hit.transform.tag=="element")
+                else if (hit.transform.tag == "element")
                 {
                     GameBox.GetComponent<GameScript>().Game(hit.transform);
                     //hit.transform.gameObject.GetComponentInChildren<Light>().intensity=1;
                 }
+                else
+                    if (hit.transform.tag == "key")
+                {
+                    key = true;
+                    Destroy(hit.transform.gameObject);
+                }
+                }
             }
-        }
 
     }
 
