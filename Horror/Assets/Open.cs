@@ -6,7 +6,7 @@ public class Open : MonoBehaviour {
     public Transform player;
     Transform door;
     int playerPos;
-    bool isOpen;
+    public bool isOpen;
     public AudioClip[] clip;
     public AudioSource source;
 	// Use this for initialization
@@ -18,6 +18,7 @@ public class Open : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        
       /*  if (Input.GetKeyDown(KeyCode.E))
         {
           

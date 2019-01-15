@@ -95,5 +95,9 @@ public class VampireControler : MonoBehaviour
               }
           }*/
 
+    public void PlayerWon()
+    {
+        gameObject.SetActive(false);
+    }
     }
 //}

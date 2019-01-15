@@ -10,7 +10,7 @@ public class PlayerControler : MonoBehaviour
     public Text text;
     public Transform[] sphere;
     public float speed = 5;
-    public Transform Chest, scroll;
+    public Transform scroll;
     public bool isHide;
     // public Rigidbody bullet;
     //public Transform gun;
@@ -41,7 +41,8 @@ public class PlayerControler : MonoBehaviour
             text.text += rand;
             list.Remove(rand);
         }
-        isHide = Chest.GetComponent<HideAndSeek>().isHide;
+        isHide = false;
+        //isHide = Chest.GetComponent<HideAndSeek>().isHide;
         isLight = false;
         isOpen = false;
         rb = GetComponent<Rigidbody>();
@@ -52,7 +53,7 @@ public class PlayerControler : MonoBehaviour
     {
         isDead = vampire.GetComponent<VampireControler>().isDead;
 
-        isHide = Chest.GetComponent<HideAndSeek>().isHide;
+       // isHide = Chest.GetComponent<HideAndSeek>().isHide;
         if (isHide==false && !isDead)
          {
         rb.velocity = transform.TransformDirection(Input.GetAxis("Horizontal") * speed, rb.velocity.y, Input.GetAxis("Vertical") * speed);
@@ -88,7 +89,6 @@ public class PlayerControler : MonoBehaviour
 
     void Update()
     {
-
         //print("* "+ Physics.Raycast(transform.position - new Vector3(0, 0.95f, 0), Vector3.down, 0.2f));
         //if(Input.GetKeyDown(KeyCode.Space)&& Physics.OverlapSphere(transform.position-new Vector3(0,1.2f,0),0.2f).Length>0)
         if (Input.GetKeyDown(KeyCode.Space) && Physics.Raycast(transform.position - new Vector3(0, 1.65f, 0), Vector3.down, 0.2f))
@@ -108,17 +108,19 @@ public class PlayerControler : MonoBehaviour
             string s="";
             for (int i = 0; i <= 6; i++)
             {
-                sphere[i].name = sphere[i].GetComponent<MeshRenderer>().material.name;
-            }
-                for (int i = 0; i <= 6;i++)
-            {
-                s += sphere[i].name;
+                s+= sphere[i].GetComponent<MeshRenderer>().material.name[0];
+                /*     sphere[i].name = sphere[i].GetComponent<MeshRenderer>().material.name;
+                 }
+                     for (int i = 0; i <= 6;i++)
+                 {
+                     s += sphere[i].name;*/
                 print(s);
             }
             print(text.text);
             if (s==text.text)
             {
                 print("win");
+                vampire.GetComponent<VampireControler>().PlayerWon();
             }
         }
         if (Input.GetKeyDown(KeyCode.Q))
@@ -135,6 +137,7 @@ public class PlayerControler : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E))
         {
+
             if (image.IsActive())
             {
                 image.gameObject.SetActive(false);
@@ -147,6 +150,7 @@ public class PlayerControler : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, 50))
             {
+                print(hit.transform.gameObject.tag);
                 if (hit.transform.tag  == "door")
                 {
                     print("door");
@@ -166,6 +170,17 @@ public class PlayerControler : MonoBehaviour
                         text.text += rand;
                         list.Remove(rand);
                     }*/
+                }
+                else if (isHide)
+                {
+                    isHide = false;
+                }
+                else if (hit.transform.tag=="chest"&&!isHide)
+                {
+              
+                    hit.transform.gameObject.GetComponent<HideAndSeek>().Hide();
+                    isHide = true;
+                   // Time.timeScale = 0;
                 }
                 else if (hit.transform.tag=="element")
                 {

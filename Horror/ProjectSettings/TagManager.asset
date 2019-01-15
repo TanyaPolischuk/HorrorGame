@@ -8,6 +8,7 @@ TagManager:
   - player
   - scroll
   - element
+  - chest
   layers:
   - Default
   - TransparentFX
