@@ -6,12 +6,12 @@ public class VampireControler : MonoBehaviour
 {
     public Animator anim;
     AudioSource source;
-    public Transform player, door, vampPoint;
+    public Transform player, door, vampPoint, spotLight;
     public Transform eyes;
     public Transform bat;
     public Vector3 nextPoint;
     NavMeshAgent agent;
-    bool isBat, isPlayer, isHide, isClose, isGo;
+    bool isBat, isPlayer, isHide, isClose, isGo, startBat, startScreamer;
     public bool isDead;
     public bool patrul;
     float timer;
@@ -20,6 +20,8 @@ public class VampireControler : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        startScreamer = false;
+        startBat = false;
         isGo = false;
         isClose = false;
         isDead = false;
@@ -34,7 +36,8 @@ public class VampireControler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        print("distance " + Vector3.Distance(gameObject.transform.position, player.transform.position));
+      //  print("patrul " + patrul + " bat " + isBat + " player " + isPlayer+" startBAt "+startBat);
+      //  print("distance " + Vector3.Distance(gameObject.transform.position, player.transform.position));
         //vamp point
         //------------------------------------------------------------------
         if (!patrul&& Vector3.Distance(gameObject.transform.position, markers[markers.Length - 1].position) < 1)
@@ -81,12 +84,15 @@ public class VampireControler : MonoBehaviour
         //----------------------------------------------------
         if (patrul && !isBat && !isPlayer)
         {
+          //  print("patrul");
             if (Vector3.Distance(gameObject.transform.position, nextPoint) > 1)
             {
+              //  print("go to "+nextPoint);
                 agent.SetDestination(nextPoint);
             }
             else
             {
+             //   print("new point");
                 nextPoint = markers[Random.Range(0, markers.Length-1)].position;
               //  print(nextPoint);
             }
@@ -108,32 +114,46 @@ public class VampireControler : MonoBehaviour
                 // print("I see " + hit.transform.tag+", patrul is"+patrul+" distance "+ Vector3.Distance(gameObject.transform.position, door.position)+" is open "+ door.GetComponent<Open>().isOpen);
                 // print(hit.transform.name);
                 //if (hit.transform.tag == "player" && !isDead)
-                if (Vector3.Distance(gameObject.transform.position,player.transform.position)<7 && !isDead)
+
+                if (Vector3.Distance(gameObject.transform.position, player.transform.position) < 7 && !isDead)
                 {
                     patrul = false;
-                   // nextPoint = gameObject.transform.position;
+                    // nextPoint = gameObject.transform.position;
 
                     print("vamp kill noob player");
-                    gameObject.transform.LookAt(player);
+                    // gameObject.transform.LookAt(Camera.main.transform);
+                    // gameObject.transform.LookAt(player);
+                    gameObject.transform.position = Camera.main.transform.position - new Vector3(2, -1, 0);
+                    gameObject.transform.LookAt(Camera.main.transform);
                     // anim.SetTrigger("attack");
                     // iTween.MoveTo(gameObject, iTween.Hash("position", player.transform, "looktarget", player.transform, "time", 2));
                     // agent.SetDestination(player.transform.position-new Vector3(0.5f,0,0.5f));
-                    agent.SetDestination(player.transform.position);
-                    agent.speed = 100;
-                   // if (Vector3.Distance(gameObject.transform.position,player.transform.position)<1)
-                    anim.SetBool("Attack", true);
+                    //  agent.SetDestination(player.transform.position);
 
-                    agent.Stop();
-                    Vector3 look = eyes.transform.position;
+                    agent.speed = 100;
+                    startScreamer = true;
+
+                    /* if (startScreamer)
+                     {
+                         gameObject.transform.LookAt(Camera.main.transform);
+                     }
+                     /*
+                     if (startScreamer && Vector3.Distance(gameObject.transform.position, player.transform.position) < 3)
+                         {*/
+                    // Debug.LogError("attack");
+                    anim.SetBool("Attack", true);
+                    //  agent.Stop();
+                    //   Vector3 look = eyes.transform.position;
                     // Vector3 look = gameObject.transform.position+Vector3.up*7;
-                    Camera.main.transform.LookAt(look);
+                    //  Camera.main.transform.LookAt(look);
                     // Time.timeScale = 0;
                     //DelayVamp();
                     source.Play();
-                    DelayVamp();
+                    // DelayVamp();
                     isDead = true;
-                   
+                    agent.Stop();
                 }
+            }
                 else if (isDead)
                 {
                     anim.SetBool("Attack", false);
@@ -145,8 +165,13 @@ public class VampireControler : MonoBehaviour
                     print("vamp open this door");
                     anim.SetTrigger("door");
                 }
+            if (startScreamer)
+            {
+                gameObject.transform.LookAt(Camera.main.transform);
+                Camera.main.transform.eulerAngles+= new Vector3(-30, 0, 0);
+               // player.transform.LookAt(eyes.transform);
             }
-          
+
         }
         //----------------------------------------------------
        /* if (Mathf.Abs(transform.position.x - player.transform.position.x) <= 5 || Mathf.Abs(transform.position.z - player.transform.position.z) <= 5)
@@ -156,10 +181,26 @@ public class VampireControler : MonoBehaviour
         }*/
          if (isBat)
          {
+           // Debug.LogError("bat d");
             agent.SetDestination(bat.transform.position);
+            startBat = true;
+            //print("dist " + Vector3.Distance(gameObject.transform.position, bat.transform.position));
            //  iTween.MoveTo(gameObject, iTween.Hash("position", new Vector3(bat.transform.position.x,transform.position.y,bat.transform.position.z), "looktarget", player.position, "time", 10));
              // iTween.MoveTo(gameObject, iTween.Hash("position", bat.transform, "looktarget", bat.transform, "time", 10));
          }
+        if (startBat&&Vector3.Distance(gameObject.transform.position,bat.transform.position)<=5.2f)
+        {
+          //  Debug.LogError("bat");
+          //  print("ow");
+            isBat = false;
+            startBat = false;
+            patrul = true;
+            bat.GetComponent<BatControler>().isBat = false;
+         
+        }
+
+
+
      }
     /* private void OnBecameVisible()
      {
@@ -195,7 +236,7 @@ public class VampireControler : MonoBehaviour
         if (Vector3.Distance(gameObject.transform.position, markers[markers.Length - 1].position) < 1)
         {
             agent.SetDestination(vampPoint.position);
-            print(Vector3.Distance(gameObject.transform.position, vampPoint.position));
+          //  print(Vector3.Distance(gameObject.transform.position, vampPoint.position));
             if (Vector3.Distance(gameObject.transform.position, vampPoint.position) <= 1)
             {
                 print("vamp close this door");

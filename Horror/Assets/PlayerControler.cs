@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class PlayerControler : MonoBehaviour
 {
     public Transform vampire, GameBox;
-    public Image image;
+    public Image image, keyImage, bookImage, pointImage;
     public Text text;
     public Transform[] sphere;
     public float speed = 5;
@@ -26,8 +26,10 @@ public class PlayerControler : MonoBehaviour
     public Ray ray;
     public AudioSource sourceFon, door;
     float move;
+    Transform posCamera, newPosCamera;
     void Start()
     {
+        posCamera = Camera.main.transform;
         key = false;
         isDead = vampire.GetComponent<VampireControler>().isDead;
         print(isDead);
@@ -139,7 +141,16 @@ public class PlayerControler : MonoBehaviour
             Cursor.visible = !Cursor.visible;
             Cursor.lockState = Cursor.visible ? CursorLockMode.None : CursorLockMode.Locked;
         }
-
+        if (Input.GetKeyDown(KeyCode.Tab)&&bookImage.IsActive())
+        {
+            image.gameObject.SetActive(!image.IsActive());
+            text.gameObject.SetActive(!text.IsActive());
+            if (image.IsActive())
+            {
+                pointImage.gameObject.SetActive(false);
+            }
+            else pointImage.gameObject.SetActive(true);
+        }
         if (Input.GetKeyDown(KeyCode.E))
         {
 
@@ -164,8 +175,10 @@ public class PlayerControler : MonoBehaviour
                 }
                 else if (hit.transform.tag == "scroll" && !image.IsActive())
                 {
-                    image.gameObject.SetActive(true);
-                    text.gameObject.SetActive(true);
+                   // image.gameObject.SetActive(true);
+                  //  text.gameObject.SetActive(true);
+                    bookImage.gameObject.SetActive(true);
+                    hit.transform.gameObject.SetActive(false);
                     /* text.text = "";
                      List<int> list = new List<int>(){1,2,3,4,5,6,7};
                      int rand;
@@ -184,6 +197,7 @@ public class PlayerControler : MonoBehaviour
                 else if (hit.transform.tag == "chest" && !isHide)
                 {
 
+                  //  Camera.main.transform.position= newPosCamera.position;
                     hit.transform.gameObject.GetComponent<HideAndSeek>().Hide();
                     isHide = true;
                     // Time.timeScale = 0;
@@ -198,6 +212,7 @@ public class PlayerControler : MonoBehaviour
                 {
                     key = true;
                     Destroy(hit.transform.gameObject);
+                    keyImage.gameObject.SetActive(true);
                 }
                 }
             }
