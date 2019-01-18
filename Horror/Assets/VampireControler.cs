@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 public class VampireControler : MonoBehaviour
 {
+    public Animator anim;
     AudioSource source;
     public Transform player, door, vampPoint;
     public Transform eyes;
@@ -33,17 +34,29 @@ public class VampireControler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        print("distance " + Vector3.Distance(gameObject.transform.position, player.transform.position));
+        //vamp point
+        //------------------------------------------------------------------
         if (!patrul&& Vector3.Distance(gameObject.transform.position, markers[markers.Length - 1].position) < 1)
         {
             agent.SetDestination(vampPoint.position);
-            print(Vector3.Distance(gameObject.transform.position, vampPoint.position));
+            //print(Vector3.Distance(gameObject.transform.position, vampPoint.position));
             isClose = true;
         }
-
-        if (Vector3.Distance(gameObject.transform.position, vampPoint.position) <= 1&&isClose)
+        //-----------------------------------------------------------------
+        if (Vector3.Distance(gameObject.transform.position, vampPoint.position) <= 1 && isClose)
         {
-            print("go go go");
-            if (door.GetComponent<Open>().closed)
+
+            isClose = false;
+            print("vamp close this door");
+            gameObject.transform.LookAt(door);
+            door.GetComponent<Open>().OpenTheDoor();
+            patrul = true;
+        }
+      //  if (Vector3.Distance(gameObject.transform.position, vampPoint.position) <= 1&&isClose)
+      //  {
+           
+/*            if (door.GetComponent<Open>().closed)
             {
                 isGo = true;
                 print("where is MY key");
@@ -55,15 +68,17 @@ public class VampireControler : MonoBehaviour
                 gameObject.transform.LookAt(door);
                 door.GetComponent<Open>().OpenTheDoor();
 
-            }
-                patrul = true;
-        }
+            }*/
+          //      patrul = true;
+      //  }
         isHide = player.GetComponent<PlayerControler>().isHide;
-        if (Vector3.Distance(gameObject.transform.position,player.transform.position)<5&&!isHide)
+       /* if (Vector3.Distance(gameObject.transform.position,player.transform.position)<5&&!isHide)
         {
             isPlayer = true;
-            transform.LookAt(player);
-        }
+            eyes.transform.LookAt(player);
+        }*/
+        //patrul
+        //----------------------------------------------------
         if (patrul && !isBat && !isPlayer)
         {
             if (Vector3.Distance(gameObject.transform.position, nextPoint) > 1)
@@ -76,7 +91,11 @@ public class VampireControler : MonoBehaviour
               //  print(nextPoint);
             }
         }
-        isBat = bat.GetComponent<BatControler>().isBat;
+        //--------------------------------------------------
+        isBat = bat.GetComponent<BatControler>().isBat;                     // Bat scream
+        //-----------------------------------------------------
+        //Ray 
+        //---------------------------------------------------
         timer += Time.deltaTime;
         if (timer >= 1)
         {
@@ -86,22 +105,50 @@ public class VampireControler : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 500))
             {
-               // print(hit.transform.name);
-                if (hit.transform.tag == "player" && !isDead)
+                // print("I see " + hit.transform.tag+", patrul is"+patrul+" distance "+ Vector3.Distance(gameObject.transform.position, door.position)+" is open "+ door.GetComponent<Open>().isOpen);
+                // print(hit.transform.name);
+                //if (hit.transform.tag == "player" && !isDead)
+                if (Vector3.Distance(gameObject.transform.position,player.transform.position)<7 && !isDead)
                 {
-                    iTween.MoveTo(gameObject, iTween.Hash("position", player.transform, "looktarget", player.transform, "time", 1));
+                    patrul = false;
+                   // nextPoint = gameObject.transform.position;
+
+                    print("vamp kill noob player");
+                    gameObject.transform.LookAt(player);
+                    // anim.SetTrigger("attack");
+                    // iTween.MoveTo(gameObject, iTween.Hash("position", player.transform, "looktarget", player.transform, "time", 2));
+                    // agent.SetDestination(player.transform.position-new Vector3(0.5f,0,0.5f));
+                    agent.SetDestination(player.transform.position);
+                    agent.speed = 100;
+                   // if (Vector3.Distance(gameObject.transform.position,player.transform.position)<1)
+                    anim.SetBool("Attack", true);
+
+                    agent.Stop();
+                    Vector3 look = eyes.transform.position;
+                    // Vector3 look = gameObject.transform.position+Vector3.up*7;
+                    Camera.main.transform.LookAt(look);
+                    // Time.timeScale = 0;
+                    //DelayVamp();
                     source.Play();
+                    DelayVamp();
                     isDead = true;
+                   
                 }
-                else if (hit.transform.tag == "door"&&Vector3.Distance(gameObject.transform.position,door.position)<3&&door.GetComponent<Open>().isOpen==false)
+                else if (isDead)
+                {
+                    anim.SetBool("Attack", false);
+                }
+                else if (hit.transform.tag == "door" && Vector3.Distance(gameObject.transform.position,door.position)<3&&door.GetComponent<Open>().isOpen==false)
                 {
                     hit.transform.GetComponent<Open>().isPlayer = false;
                     hit.transform.GetComponent<Open>().OpenTheDoor();
+                    print("vamp open this door");
+                    anim.SetTrigger("door");
                 }
             }
-
+          
         }
-
+        //----------------------------------------------------
        /* if (Mathf.Abs(transform.position.x - player.transform.position.x) <= 5 || Mathf.Abs(transform.position.z - player.transform.position.z) <= 5)
         {
             transform.LookAt(player);
@@ -114,19 +161,22 @@ public class VampireControler : MonoBehaviour
              // iTween.MoveTo(gameObject, iTween.Hash("position", bat.transform, "looktarget", bat.transform, "time", 10));
          }
      }
-        /* private void OnBecameVisible()
-         {
-             iTween.MoveTo(gameObject, iTween.Hash("position", player.transform, "looktarget", player.transform, "time", 1));
-         }*/
-        /*public void Attack()
+    /* private void OnBecameVisible()
+     {
+         iTween.MoveTo(gameObject, iTween.Hash("position", player.transform, "looktarget", player.transform, "time", 1));
+     }*/
+    /*public void Attack()
+      {
+          if (isBat)
           {
-              if (isBat)
-              {
-                  print("I hear you");
-                  iTween.MoveTo(gameObject, iTween.Hash("position", bat.transform, "looktarget", bat.transform, "time", 10));
-              }
-          }*/
-
+              print("I hear you");
+              iTween.MoveTo(gameObject, iTween.Hash("position", bat.transform, "looktarget", bat.transform, "time", 10));
+          }
+      }*/
+    IEnumerator DelayVamp()
+    {
+        yield return new WaitForSeconds(3);
+    }
     public void PlayerWon()
     {
         gameObject.SetActive(false);
@@ -134,15 +184,15 @@ public class VampireControler : MonoBehaviour
     public void DoorIsOpen()
     {
         patrul = false;
-        agent.SetDestination(vampPoint.position);
+//        agent.SetDestination(vampPoint.position);
         /* if (door.GetComponent<Open>().closed)
          {
              agent.SetDestination(vampPoint.position);
          }
          else*/
-        // agent.SetDestination(markers[markers.Length - 1].position);
-        print("tutu");
-        /*if (Vector3.Distance(gameObject.transform.position, markers[markers.Length - 1].position) < 1)
+         agent.SetDestination(markers[markers.Length - 1].position);
+       
+        if (Vector3.Distance(gameObject.transform.position, markers[markers.Length - 1].position) < 1)
         {
             agent.SetDestination(vampPoint.position);
             print(Vector3.Distance(gameObject.transform.position, vampPoint.position));
@@ -153,7 +203,7 @@ public class VampireControler : MonoBehaviour
                 door.GetComponent<Open>().OpenTheDoor();
                 patrul = true;
             }
-        }*/
+        }
     }
     }
 

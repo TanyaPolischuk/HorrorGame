@@ -90,6 +90,10 @@ public class PlayerControler : MonoBehaviour
 
     void Update()
     {
+        if (isDead)
+        {
+            gameObject.transform.LookAt(vampire);
+        }
         //print("* "+ Physics.Raycast(transform.position - new Vector3(0, 0.95f, 0), Vector3.down, 0.2f));
         //if(Input.GetKeyDown(KeyCode.Space)&& Physics.OverlapSphere(transform.position-new Vector3(0,1.2f,0),0.2f).Length>0)
         if (Input.GetKeyDown(KeyCode.Space) && Physics.Raycast(transform.position - new Vector3(0, 1.65f, 0), Vector3.down, 0.2f))
