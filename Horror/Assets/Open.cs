@@ -69,7 +69,8 @@ public class Open : MonoBehaviour {
                 if (isPlayer)
                     playerPos = transform.position.x - player.position.x > 0 ? 1 : -1;
                 else playerPos = transform.position.x - vampire.position.x > 0 ? 1 : -1;
-                iTween.RotateTo(door.gameObject, iTween.Hash("rotation", new Vector3(0, playerPos * 90, 0), "time", 5, "isLocal", true));
+                //   iTween.RotateTo(door.gameObject, iTween.Hash("rotation", new Vector3(0, playerPos * 90, 0), "time", 5, "isLocal", true));
+                iTween.RotateTo(door.gameObject, iTween.Hash("rotation", new Vector3(0, -90, 0), "time", 5, "isLocal", true));
                 source.PlayOneShot(clip[0]);
                 vampire.GetComponent<VampireControler>().DoorIsOpen();
                 // iTween.RotateTo(door.gameObject, iTween.Hash("rotation", new Vector3(0, playerPos * 90, 0), "time", 5, "isLocal", true));

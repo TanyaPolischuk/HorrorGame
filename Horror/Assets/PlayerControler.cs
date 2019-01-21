@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerControler : MonoBehaviour
 {
+    public Sprite keySprite, bookSprite;
     public Transform vampire, GameBox;
     public Image image, keyImage, bookImage, pointImage;
     public Text text;
@@ -35,7 +36,7 @@ public class PlayerControler : MonoBehaviour
         print(isDead);
         source = GetComponent<AudioSource>();
         text.text = "";
-        List<int> list = new List<int>() { 1, 2, 3, 4, 5, 6, 7 };
+        List<int> list = new List<int> { 1, 2, 3, 4, 5, 6, 7 };
         int rand;
         for (int i = 1; i <= 7; i++)
         {
@@ -65,9 +66,9 @@ public class PlayerControler : MonoBehaviour
                 if (Physics.Raycast(transform.position - new Vector3(0, 1.65f, 0), Vector3.down, 0.2f))
                 {
 
-                    source.clip = clip[1];
+                   // source.clip = clip[1];
 
-                    source.Play();
+                   // source.Play();
                 }
             }
             transform.Rotate(0, Input.GetAxis("Mouse X") * 2f, 0, Space.World);
@@ -167,7 +168,7 @@ public class PlayerControler : MonoBehaviour
             if (Physics.Raycast(ray, out hit, 50))
             {
                 print(hit.transform.gameObject.tag);
-                if (hit.transform.tag == "door")
+                if (hit.transform.tag == "door" && Vector3.Distance(gameObject.transform.position, hit.transform.position) < 3)
                 {
                     hit.transform.GetComponent<Open>().isPlayer = true;
                     print("door");
@@ -175,9 +176,18 @@ public class PlayerControler : MonoBehaviour
                 }
                 else if (hit.transform.tag == "scroll" && !image.IsActive())
                 {
-                   // image.gameObject.SetActive(true);
-                  //  text.gameObject.SetActive(true);
-                    bookImage.gameObject.SetActive(true);
+                    // image.gameObject.SetActive(true);
+                    //  text.gameObject.SetActive(true);
+                    if (!keyImage.sprite)
+                    {
+                        keyImage.sprite = bookSprite;
+                        keyImage.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        bookImage.sprite = bookSprite;
+                        bookImage.gameObject.SetActive(true);
+                    }
                     hit.transform.gameObject.SetActive(false);
                     /* text.text = "";
                      List<int> list = new List<int>(){1,2,3,4,5,6,7};
@@ -194,7 +204,7 @@ public class PlayerControler : MonoBehaviour
                 {
                     isHide = false;
                 }
-                else if (hit.transform.tag == "chest" && !isHide)
+                else if (hit.transform.tag == "chest" && !isHide && Vector3.Distance(gameObject.transform.position,hit.transform.position)<4)
                 {
 
                   //  Camera.main.transform.position= newPosCamera.position;
@@ -212,7 +222,16 @@ public class PlayerControler : MonoBehaviour
                 {
                     key = true;
                     Destroy(hit.transform.gameObject);
-                    keyImage.gameObject.SetActive(true);
+                    if (!keyImage.sprite)
+                    {
+                        keyImage.sprite = keySprite;
+                        keyImage.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        bookImage.sprite = keySprite;
+                        bookImage.gameObject.SetActive(true);
+                    }
                 }
                 }
             }

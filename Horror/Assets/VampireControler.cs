@@ -28,6 +28,7 @@ public class VampireControler : MonoBehaviour
         isPlayer = false;
         source = GetComponent<AudioSource>();
         patrul = true;
+        source.Play();
         agent = GetComponent<NavMeshAgent>();
         timer = 0;
         nextPoint = markers[Random.Range(0, markers.Length-1)].position;
@@ -36,6 +37,7 @@ public class VampireControler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
       //  print("patrul " + patrul + " bat " + isBat + " player " + isPlayer+" startBAt "+startBat);
       //  print("distance " + Vector3.Distance(gameObject.transform.position, player.transform.position));
         //vamp point
@@ -115,7 +117,7 @@ public class VampireControler : MonoBehaviour
                 // print(hit.transform.name);
                 //if (hit.transform.tag == "player" && !isDead)
 
-                if (Vector3.Distance(gameObject.transform.position, player.transform.position) < 7 && !isDead)
+                if (Vector3.Distance(gameObject.transform.position, player.transform.position) < 7 && !isDead && !isHide)
                 {
                     patrul = false;
                     // nextPoint = gameObject.transform.position;
@@ -158,7 +160,7 @@ public class VampireControler : MonoBehaviour
                 {
                     anim.SetBool("Attack", false);
                 }
-                else if (hit.transform.tag == "door" && Vector3.Distance(gameObject.transform.position,door.position)<3&&door.GetComponent<Open>().isOpen==false)
+                if (hit.transform.tag == "door" && Vector3.Distance(gameObject.transform.position,door.position)<3&&door.GetComponent<Open>().isOpen==false)
                 {
                     hit.transform.GetComponent<Open>().isPlayer = false;
                     hit.transform.GetComponent<Open>().OpenTheDoor();
