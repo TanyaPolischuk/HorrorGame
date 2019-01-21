@@ -5,6 +5,7 @@ using UnityEngine.AI;
 public class VampireControler : MonoBehaviour
 {
     public Animator anim;
+    public AudioClip[] clips;
     AudioSource source;
     public Transform player, door, vampPoint, spotLight;
     public Transform eyes;
@@ -28,7 +29,8 @@ public class VampireControler : MonoBehaviour
         isPlayer = false;
         source = GetComponent<AudioSource>();
         patrul = true;
-        source.Play();
+      // source.Play();
+      source.PlayOneShot(clips[Random.Range(0,clips.Length-1)]);
         agent = GetComponent<NavMeshAgent>();
         timer = 0;
         nextPoint = markers[Random.Range(0, markers.Length-1)].position;
@@ -37,7 +39,10 @@ public class VampireControler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (!source.isPlaying)
+        {
+            source.PlayOneShot(clips[Random.Range(0,clips.Length-1)]);
+        }
       //  print("patrul " + patrul + " bat " + isBat + " player " + isPlayer+" startBAt "+startBat);
       //  print("distance " + Vector3.Distance(gameObject.transform.position, player.transform.position));
         //vamp point

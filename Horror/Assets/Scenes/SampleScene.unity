@@ -631,6 +631,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 0}
+  clips: []
   player: {fileID: 1632612146}
   door: {fileID: 203361886}
   vampPoint: {fileID: 619924769}
@@ -55073,6 +55074,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 900902501}
+  clips:
+  - {fileID: 8300000, guid: 02d3d4c4902d743df94eb46bc882f1ca, type: 3}
+  - {fileID: 8300000, guid: a9af543a48e2a414ea9813447c556f0e, type: 3}
+  - {fileID: 8300000, guid: 1189194adf80c4f42bc1abe7bd0a24a7, type: 3}
+  - {fileID: 8300000, guid: affb9f4f8dbf84676b5ef26c9a08ac4a, type: 3}
   player: {fileID: 1632612146}
   door: {fileID: 203361886}
   vampPoint: {fileID: 619924769}
