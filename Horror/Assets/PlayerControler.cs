@@ -5,19 +5,20 @@ using UnityEngine.UI;
 
 public class PlayerControler : MonoBehaviour
 {
+    public Sprite keySprite, bookSprite;
     public Transform vampire, GameBox;
-    public Image image;
+    public Image image, keyImage, bookImage, pointImage;
     public Text text;
     public Transform[] sphere;
     public float speed = 5;
-    public Transform Chest, scroll;
+    public Transform scroll;
     public bool isHide;
     // public Rigidbody bullet;
     //public Transform gun;
     Rigidbody rb;
     Transform cam;
     public GameObject spotLight;
-    public bool isLight;
+    public bool isLight, key;
     Vector3 rotCam;
     bool isOpen, isDead;
     public AudioClip[] clip;
@@ -26,13 +27,16 @@ public class PlayerControler : MonoBehaviour
     public Ray ray;
     public AudioSource sourceFon, door;
     float move;
+    Transform posCamera, newPosCamera;
     void Start()
     {
+        posCamera = Camera.main.transform;
+        key = false;
         isDead = vampire.GetComponent<VampireControler>().isDead;
         print(isDead);
         source = GetComponent<AudioSource>();
         text.text = "";
-        List<int> list = new List<int>() { 1, 2, 3, 4, 5, 6, 7 };
+        List<int> list = new List<int> { 1, 2, 3, 4, 5, 6, 7 };
         int rand;
         for (int i = 1; i <= 7; i++)
         {
@@ -41,7 +45,8 @@ public class PlayerControler : MonoBehaviour
             text.text += rand;
             list.Remove(rand);
         }
-        isHide = Chest.GetComponent<HideAndSeek>().isHide;
+        isHide = false;
+        //isHide = Chest.GetComponent<HideAndSeek>().isHide;
         isLight = false;
         isOpen = false;
         rb = GetComponent<Rigidbody>();
@@ -52,7 +57,7 @@ public class PlayerControler : MonoBehaviour
     {
         isDead = vampire.GetComponent<VampireControler>().isDead;
 
-        isHide = Chest.GetComponent<HideAndSeek>().isHide;
+       // isHide = Chest.GetComponent<HideAndSeek>().isHide;
         if (isHide==false && !isDead)
          {
         rb.velocity = transform.TransformDirection(Input.GetAxis("Horizontal") * speed, rb.velocity.y, Input.GetAxis("Vertical") * speed);
@@ -61,9 +66,9 @@ public class PlayerControler : MonoBehaviour
                 if (Physics.Raycast(transform.position - new Vector3(0, 1.65f, 0), Vector3.down, 0.2f))
                 {
 
-                    source.clip = clip[1];
+                   // source.clip = clip[1];
 
-                    source.Play();
+                   // source.Play();
                 }
             }
             transform.Rotate(0, Input.GetAxis("Mouse X") * 2f, 0, Space.World);
@@ -88,7 +93,10 @@ public class PlayerControler : MonoBehaviour
 
     void Update()
     {
-
+        if (isDead)
+        {
+            gameObject.transform.LookAt(vampire);
+        }
         //print("* "+ Physics.Raycast(transform.position - new Vector3(0, 0.95f, 0), Vector3.down, 0.2f));
         //if(Input.GetKeyDown(KeyCode.Space)&& Physics.OverlapSphere(transform.position-new Vector3(0,1.2f,0),0.2f).Length>0)
         if (Input.GetKeyDown(KeyCode.Space) && Physics.Raycast(transform.position - new Vector3(0, 1.65f, 0), Vector3.down, 0.2f))
@@ -108,17 +116,19 @@ public class PlayerControler : MonoBehaviour
             string s="";
             for (int i = 0; i <= 6; i++)
             {
-                sphere[i].name = sphere[i].GetComponent<MeshRenderer>().material.name;
-            }
-                for (int i = 0; i <= 6;i++)
-            {
-                s += sphere[i].name;
+                s+= sphere[i].GetComponent<MeshRenderer>().material.name[0];
+                /*     sphere[i].name = sphere[i].GetComponent<MeshRenderer>().material.name;
+                 }
+                     for (int i = 0; i <= 6;i++)
+                 {
+                     s += sphere[i].name;*/
                 print(s);
             }
             print(text.text);
             if (s==text.text)
             {
                 print("win");
+                vampire.GetComponent<VampireControler>().PlayerWon();
             }
         }
         if (Input.GetKeyDown(KeyCode.Q))
@@ -132,9 +142,19 @@ public class PlayerControler : MonoBehaviour
             Cursor.visible = !Cursor.visible;
             Cursor.lockState = Cursor.visible ? CursorLockMode.None : CursorLockMode.Locked;
         }
-
+        if (Input.GetKeyDown(KeyCode.Tab)&&bookImage.IsActive())
+        {
+            image.gameObject.SetActive(!image.IsActive());
+            text.gameObject.SetActive(!text.IsActive());
+            if (image.IsActive())
+            {
+                pointImage.gameObject.SetActive(false);
+            }
+            else pointImage.gameObject.SetActive(true);
+        }
         if (Input.GetKeyDown(KeyCode.E))
         {
+
             if (image.IsActive())
             {
                 image.gameObject.SetActive(false);
@@ -147,33 +167,74 @@ public class PlayerControler : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, 50))
             {
-                if (hit.transform.tag  == "door")
+                print(hit.transform.gameObject.tag);
+                if (hit.transform.tag == "door" && Vector3.Distance(gameObject.transform.position, hit.transform.position) < 3)
                 {
+                    hit.transform.GetComponent<Open>().isPlayer = true;
                     print("door");
                     hit.transform.GetComponent<Open>().OpenTheDoor();
                 }
                 else if (hit.transform.tag == "scroll" && !image.IsActive())
                 {
-                    image.gameObject.SetActive(true);
-                    text.gameObject.SetActive(true);
-                   /* text.text = "";
-                    List<int> list = new List<int>(){1,2,3,4,5,6,7};
-                    int rand;
-                    for (int i = 1; i <= 7;i++)
+                    // image.gameObject.SetActive(true);
+                    //  text.gameObject.SetActive(true);
+                    if (!keyImage.sprite)
                     {
-                        rand = list[Random.Range(0, list.Count-1)];
-                        print(rand);
-                        text.text += rand;
-                        list.Remove(rand);
-                    }*/
+                        keyImage.sprite = bookSprite;
+                        keyImage.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        bookImage.sprite = bookSprite;
+                        bookImage.gameObject.SetActive(true);
+                    }
+                    hit.transform.gameObject.SetActive(false);
+                    /* text.text = "";
+                     List<int> list = new List<int>(){1,2,3,4,5,6,7};
+                     int rand;
+                     for (int i = 1; i <= 7;i++)
+                     {
+                         rand = list[Random.Range(0, list.Count-1)];
+                         print(rand);
+                         text.text += rand;
+                         list.Remove(rand);
+                     }*/
                 }
-                else if (hit.transform.tag=="element")
+                else if (isHide)
+                {
+                    isHide = false;
+                }
+                else if (hit.transform.tag == "chest" && !isHide && Vector3.Distance(gameObject.transform.position,hit.transform.position)<4)
+                {
+
+                  //  Camera.main.transform.position= newPosCamera.position;
+                    hit.transform.gameObject.GetComponent<HideAndSeek>().Hide();
+                    isHide = true;
+                    // Time.timeScale = 0;
+                }
+                else if (hit.transform.tag == "element")
                 {
                     GameBox.GetComponent<GameScript>().Game(hit.transform);
                     //hit.transform.gameObject.GetComponentInChildren<Light>().intensity=1;
                 }
+                else
+                    if (hit.transform.tag == "key")
+                {
+                    key = true;
+                    Destroy(hit.transform.gameObject);
+                    if (!keyImage.sprite)
+                    {
+                        keyImage.sprite = keySprite;
+                        keyImage.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        bookImage.sprite = keySprite;
+                        bookImage.gameObject.SetActive(true);
+                    }
+                }
+                }
             }
-        }
 
     }
 

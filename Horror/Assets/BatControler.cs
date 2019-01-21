@@ -54,6 +54,7 @@ public class BatControler : MonoBehaviour
         if  (player.GetComponent<PlayerControler>().isLight)
           {
             isBat = true;
+           
             print("arrrr");
         }
     }
