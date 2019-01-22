@@ -11,7 +11,7 @@ public class AudioControl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        biosphere.volume = Volume.value;
+//        biosphere.volume = Volume.value;
 
 	}
 }
