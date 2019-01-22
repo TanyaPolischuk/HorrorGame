@@ -23,15 +23,7 @@ public class GameScript : MonoBehaviour
     public void Game(Transform el)
     {
         print(el);
-        /*if (elements[0]==el)
-         {
-             elements[0] = null;
-         }
-         else if (elements[1]==el)
-         {
-             elements[1] = null;
-         }
-             el.gameObject.GetComponentInChildren<Light>().intensity = el.gameObject.GetComponentInChildren<Light>().intensity == 1 ? 0 : 1;*/
+       
         if (el.gameObject.GetComponentInChildren<Light>().intensity == 0) //коли вмикаємо лампочку
         {
             print("turn on");
@@ -56,7 +48,6 @@ public class GameScript : MonoBehaviour
                 elements[1].GetComponentInChildren<Light>().color = temp;
                 //занулення
                 elements[0].GetComponentInChildren<Light>().intensity = 0;
-                //elements[1].GetComponentInChildren<Light>().intensity = 0;
                 print(elements[0].GetComponent<MeshRenderer>().material.name);
                 print(elements[1].GetComponent<MeshRenderer>().material.name);
                 elements[0] = null;

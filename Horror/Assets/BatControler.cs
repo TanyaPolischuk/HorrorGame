@@ -10,26 +10,20 @@ public class BatControler : MonoBehaviour
     public AudioSource source;
     public AudioClip clip;
     float timer;
+    Renderer m_Renderer;
     // Start is called before the first frame update
     void Start()
     {
+        m_Renderer = GetComponent<Renderer>();
         timer = 0;
         nextPoint = new Vector3(Random.Range(marker1.transform.position.x, marker2.transform.position.x),
                                         0, Random.Range(marker1.transform.position.z, marker2.transform.position.z));
-        iTween.MoveTo(gameObject, iTween.Hash("position", nextPoint, "speed", 100*Time.deltaTime, "orienttopath",true));
-
+        iTween.MoveTo(gameObject, iTween.Hash("position", nextPoint, "speed", 100 * Time.deltaTime, "orienttopath", true));
         isBat = false;
     }
     private void Update()
     {
-        /*timer += Time.deltaTime;
-        if (timer>=1)
-        {
-            timer = 0;
-            source.PlayOneShot(clip);
-        }*/
         source.Play();
-        // gameObject.transform.eulerAngles = new Vector3(-90, 0, 0);
         if (!isBat)
         {
             if (gameObject.transform.position == nextPoint)
@@ -39,24 +33,24 @@ public class BatControler : MonoBehaviour
                 iTween.MoveTo(gameObject, iTween.Hash("position", nextPoint, "speed", 100 * Time.deltaTime, "looktarget", nextPoint, "delay", 10));
             }
         }
-    }
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        if (player.GetComponent<PlayerControler>().isLight && !isBat)
+        if (m_Renderer.isVisible&&Vector3.Distance(gameObject.transform.position,player.transform.position)<7)
         {
-            OnBecameVisible();
+            timer += Time.deltaTime;
+           Debug.Log("visible");
+           // isBat = true;
+        }
+        else
+        {
+            timer = 0;
+          //  isBat = false;
+           Debug.Log("no visible");
+        }
+        if (timer>2)
+        {
+            gameObject.transform.position = Camera.main.transform.position;
+            print("arrrrrrr");
+            timer = 0;
         }
     }
-
-    void OnBecameVisible()
-    {
-        if  (player.GetComponent<PlayerControler>().isLight)
-          {
-            isBat = true;
-           
-            print("arrrr");
-        }
-    }
-}
+}  
 

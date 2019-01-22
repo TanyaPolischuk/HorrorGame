@@ -10,6 +10,8 @@ TagManager:
   - element
   - chest
   - key
+  - door2
+  - game
   layers:
   - Default
   - TransparentFX
